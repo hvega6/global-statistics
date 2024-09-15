@@ -8,7 +8,6 @@ def symbol_to_path(symbol, base_dir="data"):
     """Return CSV file path given ticker symbol."""
     return os.path.join(base_dir, "{}.csv".format(str(symbol)))
 
-
 def get_data(symbols, dates):
     """Read stock data (adjusted close) for given symbols from CSV files."""
     df = pd.DataFrame(index=dates)
@@ -25,7 +24,6 @@ def get_data(symbols, dates):
 
     return df
 
-
 def plot_data(df, title="Stock prices"):
     """Plot stock prices with a custom title and meaningful axis labels."""
     ax = df.plot(title=title, fontsize=12)
@@ -33,22 +31,19 @@ def plot_data(df, title="Stock prices"):
     ax.set_ylabel("Price")
     plt.show()
 
-
 def get_rolling_mean(values, window):
     """Return rolling mean of given values, using specified window size."""
-    return pd.rolling_mean(values, window=window)
-
+    return values.rolling(window=window).mean()  # Updated to use rolling()
 
 def get_rolling_std(values, window):
     """Return rolling standard deviation of given values, using specified window size."""
-    # TODO: Compute and return rolling standard deviation
-
+    return values.rolling(window=window).std()  # Compute rolling standard deviation
 
 def get_bollinger_bands(rm, rstd):
     """Return upper and lower Bollinger Bands."""
-    # TODO: Compute upper_band and lower_band
+    upper_band = rm + (rstd * 2)  # Upper band: rolling mean + 2 * rolling std
+    lower_band = rm - (rstd * 2)  # Lower band: rolling mean - 2 * rolling std
     return upper_band, lower_band
-
 
 def test_run():
     # Read data
@@ -69,15 +64,14 @@ def test_run():
     # Plot raw SPY values, rolling mean and Bollinger Bands
     ax = df['SPY'].plot(title="Bollinger Bands", label='SPY')
     rm_SPY.plot(label='Rolling mean', ax=ax)
-    upper_band.plot(label='upper band', ax=ax)
-    lower_band.plot(label='lower band', ax=ax)
+    upper_band.plot(label='Upper band', ax=ax)
+    lower_band.plot(label='Lower band', ax=ax)
 
     # Add axis labels and legend
     ax.set_xlabel("Date")
     ax.set_ylabel("Price")
     ax.legend(loc='upper left')
     plt.show()
-
 
 if __name__ == "__main__":
     test_run()
